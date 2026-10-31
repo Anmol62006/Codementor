@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeMentor — AI Programming Learning Platform</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-theme">
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-brand">
+      <div class="brand-logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="16 18 22 12 16 6"></polyline>
+          <polyline points="8 6 2 12 8 18"></polyline>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">CodeMentor</span>
+        <span class="brand-badge">Pedagogical AI</span>
+      </div>
+    </div>
+
+    <nav class="nav-links">
+      <button class="nav-btn active" data-view="dashboard">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        Debugging DNA
+      </button>
+      <button class="nav-btn" data-view="catalog">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        Practice Problems
+      </button>
+      <button class="nav-btn" data-view="custom">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+        Diagnose Custom Code
+      </button>
+    </nav>
+
+    <div class="nav-controls">
+      <!-- AI / Execution Status Pill -->
+      <div class="status-pill" id="system-status-pill" title="Execution Engine and AI Status">
+        <span class="status-dot"></span>
+        <span id="system-status-text">Verified Execution</span>
+      </div>
+
+      <!-- Language Toggle (English / Hinglish) -->
+      <div class="lang-selector">
+        <button class="lang-btn active" data-lang="en" title="English Explanations">EN</button>
+        <button class="lang-btn" data-lang="hinglish" title="Hinglish / Hindi Explanations">हिन्दी</button>
+      </div>
+
+      <!-- Student Switcher -->
+      <div class="user-switcher-container">
+        <select id="user-select" title="Switch Student Profile">
+          <option value="1">Alex Sharma (Experienced)</option>
+          <option value="2">Priya Patel</option>
+          <option value="3">Rohan Verma (New Learner)</option>
+        </select>
+      </div>
+
+      <!-- Theme Toggle -->
+      <button id="theme-toggle" class="icon-btn" title="Toggle Dark/Light Mode">
+        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Application Body -->
+  <main class="app-container">
+
+    <!-- ==================== VIEW 1: DEBUGGING DNA DASHBOARD ==================== -->
+    <section id="view-dashboard" class="app-view active">
+      <div class="view-header">
+        <div class="student-profile-banner">
+          <div class="avatar" id="student-avatar">AS</div>
+          <div class="profile-meta">
+            <h1 class="student-name" id="student-name">Alex Sharma</h1>
+            <p class="student-subtitle">
+              Persistent Learning Profile &bull; Stored in SQLite &bull;
+              <span id="student-join-date">Active Member</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button class="btn btn-primary" id="btn-quick-practice">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            Continue Practice
+          </button>
+        </div>
+      </div>
+
+      <!-- Personalized Insights Banner -->
+      <div class="insights-container" id="insights-container">
+        <!-- Dynamically injected real insights -->
+      </div>
+
+      <!-- Key Metrics Summary Grid -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon" style="background: rgba(99, 102, 241, 0.15); color: #818cf8;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          </div>
+          <div class="metric-data">
+            <span class="metric-label">Total Recorded Attempts</span>
+            <span class="metric-value" id="val-total-attempts">0</span>
+            <span class="metric-subtext">Real persistent submissions</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          </div>
+          <div class="metric-data">
+            <span class="metric-label">Solve Rate</span>
+            <span class="metric-value" id="val-solve-rate">0%</span>
+            <span class="metric-subtext" id="val-solved-ratio">0 of 0 solved</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          </div>
+          <div class="metric-data">
+            <span class="metric-label">Avg Hints Before Solve</span>
+            <span class="metric-value" id="val-avg-hints">0.0</span>
+            <span class="metric-subtext">Prompted hints per success</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon" style="background: rgba(239, 68, 68, 0.15); color: #f87171;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          </div>
+          <div class="metric-data">
+            <span class="metric-label">Top Mistake Category</span>
+            <span class="metric-value" id="val-top-mistake">None</span>
+            <span class="metric-subtext" id="val-top-mistake-sub">Based on code analysis</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DNA Analytics Panels -->
+      <div class="dna-panels-grid">
+        <!-- Panel 1: Mistake Frequency Breakdown -->
+        <div class="card dna-card">
+          <div class="card-header">
+            <h3>Debugging Mistake Taxonomy</h3>
+            <span class="badge badge-subtle">Real Database Aggregation</span>
+          </div>
+          <p class="card-desc">Frequency of programming mistake patterns identified in your code submissions.</p>
+          <div class="category-bars-list" id="category-bars-container">
+            <!-- Dynamic Category Rows -->
+          </div>
+        </div>
+
+        <!-- Panel 2: Debugging Timeline Chart -->
+        <div class="card dna-card">
+          <div class="card-header">
+            <h3>Debugging Frequency Timeline</h3>
+            <span class="badge badge-subtle">Activity Over Time</span>
+          </div>
+          <p class="card-desc">Daily progression of debugging attempts and solved problems.</p>
+          <div class="timeline-chart-box" id="timeline-chart-box">
+            <!-- Dynamic SVG Timeline -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Concept Strengths & Needs Practice Grid -->
+      <div class="dna-insights-grid">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="text-danger flex-center gap-2">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Concepts Needing Practice
+            </h3>
+          </div>
+          <div class="concept-list" id="concepts-needing-practice">
+            <!-- Injected -->
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="text-success flex-center gap-2">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              Concepts Showing Improvement
+            </h3>
+          </div>
+          <div class="concept-list" id="concepts-improving">
+            <!-- Injected -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State View (Shown for new users) -->
+      <div class="empty-state-card card" id="dashboard-empty-state" style="display: none;">
+        <div class="empty-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+        </div>
+        <h2>Start Building Your Debugging DNA</h2>
+        <p>No attempts recorded yet for this student. CodeMentor tracks every boundary mistake, loop flaw, and syntax error you encounter to build a personalized mastery profile.</p>
+        <div class="empty-actions">
+          <button class="btn btn-primary" id="btn-empty-start">Start Your First Challenge</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 2: PRACTICE PROBLEMS CATALOG ==================== -->
+    <section id="view-catalog" class="app-view">
+      <div class="view-header">
+        <div>
+          <h1>Curated Practice Problems</h1>
+          <p class="text-muted">Master debugging by identifying intentional bugs in beginner-to-intermediate code.</p>
+        </div>
+        <div class="catalog-filters">
+          <select id="filter-language">
+            <option value="all">All Languages</option>
+            <option value="c">C</option>
+            <option value="python">Python</option>
+            <option value="java">Java</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="problems-grid" id="problems-grid">
+        <!-- Dynamically injected problem cards -->
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 3: HINT-FIRST WORKSPACE ==================== -->
+    <section id="view-workspace" class="app-view">
+      <!-- Workspace Top Subheader -->
+      <div class="workspace-topbar">
+        <div class="workspace-prob-info">
+          <button class="btn btn-subtle" id="btn-back-to-catalog">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back
+          </button>
+          <div>
+            <h2 id="ws-prob-title">Recursive Factorial Bug</h2>
+            <div class="ws-badges">
+              <span class="badge badge-lang" id="ws-badge-lang">C</span>
+              <span class="badge badge-diff" id="ws-badge-diff">Beginner</span>
+              <span class="badge badge-concept" id="ws-badge-concept">Recursion & Base Cases</span>
+              <span class="badge badge-hints" id="ws-badge-hints">Hints Used: 0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="workspace-top-actions">
+          <div class="lang-mode-indicator">
+            <span class="text-muted text-sm">Explanation:</span>
+            <span class="badge badge-subtle" id="ws-lang-indicator">English</span>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="btn-unlock-solution">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            Unlock Solution
+          </button>
+        </div>
+      </div>
+
+      <!-- 8-Stage Progressive Stepper -->
+      <div class="stepper-container">
+        <div class="stepper" id="stepper">
+          <div class="step-item active" data-stage="1"><span class="step-num">1</span><span class="step-label">Understand</span></div>
+          <div class="step-item" data-stage="2"><span class="step-num">2</span><span class="step-label">Investigate</span></div>
+          <div class="step-item" data-stage="3"><span class="step-num">3</span><span class="step-label">First Hint</span></div>
+          <div class="step-item" data-stage="4"><span class="step-num">4</span><span class="step-label">Stronger Hint</span></div>
+          <div class="step-item" data-stage="5"><span class="step-num">5</span><span class="step-label">Attempt</span></div>
+          <div class="step-item" data-stage="6"><span class="step-num">6</span><span class="step-label">Verification</span></div>
+          <div class="step-item" data-stage="7"><span class="step-num">7</span><span class="step-label">Explanation</span></div>
+          <div class="step-item" data-stage="8"><span class="step-num">8</span><span class="step-label">Solution</span></div>
+        </div>
+      </div>
+
+      <!-- Workspace Dual Split Pane -->
+      <div class="workspace-grid">
+        <!-- Left Pane: Pedagogical Stage Guide Card -->
+        <div class="workspace-guide-pane">
+          <div class="card stage-card">
+            <div class="stage-card-header">
+              <div class="stage-title-wrap">
+                <span class="stage-pill" id="stage-badge-pill">Stage 1 of 8</span>
+                <h3 id="stage-header-title">Step 1: Understand the Problem</h3>
+              </div>
+              <div class="ai-provider-tag" id="ai-provider-tag">
+                <span class="ai-mode-dot"></span>
+                <span id="ai-provider-label">Pedagogical Engine</span>
+              </div>
+            </div>
+
+            <!-- Dynamic Stage Body -->
+            <div class="stage-body" id="stage-body">
+              <!-- Dynamically populated per stage -->
+            </div>
+
+            <!-- Stage Card Action Footer -->
+            <div class="stage-card-footer" id="stage-card-footer">
+              <!-- Dynamically populated buttons -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Pane: Code Editor & Sandboxed Verification Console -->
+        <div class="workspace-editor-pane">
+          <!-- Editor Header -->
+          <div class="editor-header">
+            <div class="editor-tabs">
+              <span class="editor-tab active" id="editor-filename">solution.c</span>
+            </div>
+            <div class="editor-actions">
+              <button class="btn btn-subtle btn-sm" id="btn-reset-code" title="Reset to original buggy code">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 2v6h6M21.5 22v-6h-6"/><path d="M22 11.5A10 10 0 0 0 3.2 7.2L2.5 8M2 12.5a10 10 0 0 0 18.8 4.2l.7-.7"/></svg>
+                Reset Code
+              </button>
+              <button class="btn btn-success btn-sm" id="btn-verify-code">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                Run & Verify Code
+              </button>
+            </div>
+          </div>
+
+          <!-- Code Editor Textarea with line numbers -->
+          <div class="editor-wrapper">
+            <div class="line-numbers" id="line-numbers">1<br>2<br>3<br>4<br>5</div>
+            <textarea id="code-editor" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+          </div>
+
+          <!-- Execution & Test Results Panel -->
+          <div class="console-panel">
+            <div class="console-header">
+              <div class="console-title flex-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+                Execution & Test Suite Console
+              </div>
+              <div class="console-badge" id="console-verified-badge">
+                <span class="dot-green"></span>
+                <span>Verified Execution Ready</span>
+              </div>
+            </div>
+
+            <div class="console-content" id="console-content">
+              <div class="console-placeholder">
+                Click <strong>Run & Verify Code</strong> to compile and execute your solution in the safe sandbox against test cases.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 4: CUSTOM CODE DIAGNOSTICS ==================== -->
+    <section id="view-custom" class="app-view">
+      <div class="view-header">
+        <div>
+          <h1>Diagnose Custom Code</h1>
+          <p class="text-muted">Submit your own buggy snippet or error message. CodeMentor classifies the mistake into your persistent DNA and launches guided hints.</p>
+        </div>
+      </div>
+
+      <div class="custom-submit-card card">
+        <form id="form-custom-debug">
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="custom-lang">Programming Language</label>
+              <select id="custom-lang" required>
+                <option value="python">Python</option>
+                <option value="c">C</option>
+                <option value="cpp">C++</option>
+                <option value="java">Java</option>
+              </select>
+            </div>
+            <div class="form-group flex-2">
+              <label for="custom-title">Problem / Program Description</label>
+              <input type="text" id="custom-title" placeholder="e.g. Factorial calculation or Array search" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="custom-error">Observed Error / Output (Optional)</label>
+            <input type="text" id="custom-error" placeholder="e.g. IndexError: list index out of range or Segmentation Fault">
+          </div>
+
+          <div class="form-group">
+            <label for="custom-code">Buggy Code Snippet</label>
+            <textarea id="custom-code" rows="10" placeholder="// Paste your code here..." required></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="btn-submit-custom">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+              Analyze Mistake & Start Hint Journey
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Registration Modal -->
+  <div class="modal-overlay" id="modal-register">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Register New Student</h3>
+        <button class="icon-btn" id="modal-close-btn">&times;</button>
+      </div>
+      <form id="form-register">
+        <div class="form-group">
+          <label for="reg-username">Student Username</label>
+          <input type="text" id="reg-username" placeholder="e.g. rohan_coder" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-display-name">Full Name</label>
+          <input type="text" id="reg-display-name" placeholder="e.g. Rohan Verma" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-password">Password</label>
+          <input type="password" id="reg-password" value="password123" required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="modal-cancel-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Profile</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
