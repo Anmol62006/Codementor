@@ -20,38 +20,55 @@ import code_executor
 import analyzer
 import tutor_engine
 
-DEFAULT_HOST = "0.0.0.0" if os.environ.get("RENDER") else "127.0.0.1"
+# Bind to 0.0.0.0 on Render / Linux to allow cloud proxy routing; use 127.0.0.1 on Windows local
+DEFAULT_HOST = "0.0.0.0" if (sys.platform != "win32" or os.environ.get("RENDER")) else "127.0.0.1"
 HOST = os.environ.get("HOST", DEFAULT_HOST)
 PORT = int(os.environ.get("PORT", 8000))
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-def get_static_dir() -> str:
-    """Finds the static directory even if nested or deployed in varying structures."""
-    candidates = [
-        os.path.join(BASE_DIR, "static"),
-        os.path.join(BASE_DIR, "Hackathon Project", "static"),
-        os.path.join(os.getcwd(), "static"),
-        os.path.join(os.getcwd(), "Hackathon Project", "static"),
-        os.path.join(os.path.dirname(BASE_DIR), "static"),
-    ]
-    for cand in candidates:
-        if os.path.isdir(cand) and os.path.isfile(os.path.join(cand, "index.html")):
-            return cand
+ALLOWED_STATIC_EXTENSIONS = {
+    ".html", ".htm", ".css", ".js", ".mjs", ".json",
+    ".png", ".jpg", ".jpeg", ".gif", ".svg", ".ico",
+    ".woff", ".woff2", ".ttf", ".eot", ".map"
+}
 
+def find_static_file(rel_path: str) -> Optional[str]:
+    """
+    Finds a static asset file whether placed:
+    1. Inside a 'static/' folder (e.g. static/index.html)
+    2. Directly at the repository root (e.g. index.html)
+    3. Inside any subfolder
+    """
+    clean = rel_path.lstrip("/").replace("\\", "/")
+    # Strip leading 'static/' if request already included it
+    base_name = clean.split("static/", 1)[-1] if clean.startswith("static/") else clean
+
+    candidate_paths = [
+        # 1. Check inside static/ folder next to server.py
+        os.path.join(BASE_DIR, "static", base_name),
+        # 2. Check directly next to server.py (where index.html, style.css, app.js are in GitHub root)
+        os.path.join(BASE_DIR, base_name),
+        # 3. Check inside working directory static/ folder
+        os.path.join(os.getcwd(), "static", base_name),
+        # 4. Check directly in working directory
+        os.path.join(os.getcwd(), base_name),
+        # 5. Check inside subfolders
+        os.path.join(BASE_DIR, "Hackathon Project", "static", base_name),
+        os.path.join(BASE_DIR, "Hackathon Project", base_name),
+    ]
+    for p in candidate_paths:
+        if os.path.isfile(p):
+            return p
+
+    # Recursive fallback search
     try:
         for root, dirs, files in os.walk(BASE_DIR):
-            if "index.html" in files:
-                return root
-        parent_dir = os.path.dirname(BASE_DIR)
-        for root, dirs, files in os.walk(parent_dir):
-            if "index.html" in files:
-                return root
+            if base_name in files:
+                return os.path.join(root, base_name)
     except Exception:
         pass
 
-    return os.path.join(BASE_DIR, "static")
-
-STATIC_DIR = get_static_dir()
+    return None
 
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
     daemon_threads = True
@@ -82,19 +99,31 @@ class CodeMentorHandler(SimpleHTTPRequestHandler):
             return
 
         # Serve static frontend files
-        static_dir = get_static_dir()
         if path == "/" or path == "":
-            self.serve_file(os.path.join(static_dir, "index.html"), "text/html; charset=utf-8")
+            index_path = find_static_file("index.html")
+            if index_path:
+                self.serve_file(index_path, "text/html; charset=utf-8")
+            else:
+                self.serve_missing_static_page(os.path.join(BASE_DIR, "index.html"))
             return
 
         clean_path = path.lstrip("/")
-        file_path = os.path.join(static_dir, clean_path)
-        if os.path.exists(file_path) and os.path.isfile(file_path):
-            mime_type, _ = mimetypes.guess_type(file_path)
-            self.serve_file(file_path, mime_type or "application/octet-stream")
+        target_file = find_static_file(clean_path)
+
+        if target_file:
+            _, ext = os.path.splitext(target_file)
+            if ext.lower() not in ALLOWED_STATIC_EXTENSIONS:
+                self.send_json_error(403, "Access to non-static file is forbidden")
+                return
+            mime_type, _ = mimetypes.guess_type(target_file)
+            self.serve_file(target_file, mime_type or "application/octet-stream")
         else:
             # Fallback to index.html for SPA client-side routing
-            self.serve_file(os.path.join(static_dir, "index.html"), "text/html; charset=utf-8")
+            index_path = find_static_file("index.html")
+            if index_path:
+                self.serve_file(index_path, "text/html; charset=utf-8")
+            else:
+                self.serve_missing_static_page(os.path.join(BASE_DIR, "index.html"))
 
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
