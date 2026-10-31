@@ -24,7 +24,34 @@ DEFAULT_HOST = "0.0.0.0" if os.environ.get("RENDER") else "127.0.0.1"
 HOST = os.environ.get("HOST", DEFAULT_HOST)
 PORT = int(os.environ.get("PORT", 8000))
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-STATIC_DIR = os.path.join(BASE_DIR, "static")
+
+def get_static_dir() -> str:
+    """Finds the static directory even if nested or deployed in varying structures."""
+    candidates = [
+        os.path.join(BASE_DIR, "static"),
+        os.path.join(BASE_DIR, "Hackathon Project", "static"),
+        os.path.join(os.getcwd(), "static"),
+        os.path.join(os.getcwd(), "Hackathon Project", "static"),
+        os.path.join(os.path.dirname(BASE_DIR), "static"),
+    ]
+    for cand in candidates:
+        if os.path.isdir(cand) and os.path.isfile(os.path.join(cand, "index.html")):
+            return cand
+
+    try:
+        for root, dirs, files in os.walk(BASE_DIR):
+            if "index.html" in files:
+                return root
+        parent_dir = os.path.dirname(BASE_DIR)
+        for root, dirs, files in os.walk(parent_dir):
+            if "index.html" in files:
+                return root
+    except Exception:
+        pass
+
+    return os.path.join(BASE_DIR, "static")
+
+STATIC_DIR = get_static_dir()
 
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
     daemon_threads = True
@@ -55,18 +82,19 @@ class CodeMentorHandler(SimpleHTTPRequestHandler):
             return
 
         # Serve static frontend files
+        static_dir = get_static_dir()
         if path == "/" or path == "":
-            self.serve_file(os.path.join(STATIC_DIR, "index.html"), "text/html; charset=utf-8")
+            self.serve_file(os.path.join(static_dir, "index.html"), "text/html; charset=utf-8")
             return
 
         clean_path = path.lstrip("/")
-        file_path = os.path.join(STATIC_DIR, clean_path)
+        file_path = os.path.join(static_dir, clean_path)
         if os.path.exists(file_path) and os.path.isfile(file_path):
             mime_type, _ = mimetypes.guess_type(file_path)
             self.serve_file(file_path, mime_type or "application/octet-stream")
         else:
             # Fallback to index.html for SPA client-side routing
-            self.serve_file(os.path.join(STATIC_DIR, "index.html"), "text/html; charset=utf-8")
+            self.serve_file(os.path.join(static_dir, "index.html"), "text/html; charset=utf-8")
 
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
@@ -393,7 +421,65 @@ class CodeMentorHandler(SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(content)
         except Exception as e:
+            if full_path.endswith("index.html"):
+                self.serve_missing_static_page(full_path)
+                return
             self.send_json_error(404, f"File not found: {str(e)}")
+
+    def serve_missing_static_page(self, missing_path: str):
+        html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CodeMentor — Static Frontend Folder Missing</title>
+  <style>
+    body {{
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0b0f19;
+      color: #e2e8f0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 80vh;
+      margin: 0;
+    }}
+    .box {{
+      max-width: 640px;
+      background: #131b2e;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }}
+    h1 {{ color: #f59e0b; font-size: 22px; margin-top: 0; }}
+    code {{ background: #080d1a; color: #38bdf8; padding: 2px 6px; border-radius: 4px; font-family: monospace; }}
+    ol {{ line-height: 1.8; color: #cbd5e1; padding-left: 20px; }}
+    .status {{ display: inline-block; background: #059669; color: white; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-bottom: 16px; }}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="status">✓ Python Backend Running Successfully</div>
+    <h1>⚠️ Static Frontend Folder Missing in Repository</h1>
+    <p>Render started your application, but could not find <code>index.html</code> at <code>{missing_path}</code>.</p>
+    <p>This happens when only the Python files were uploaded to GitHub without the <code>static/</code> directory.</p>
+    <h3>👉 How to fix in 1 minute:</h3>
+    <ol>
+      <li>Open your project repository on <b>GitHub</b>.</li>
+      <li>Click <b>Add file</b> &gt; <b>Upload files</b>.</li>
+      <li>Drag and drop the entire <code>static</code> folder (which includes <code>index.html</code>, <code>app.js</code>, and <code>style.css</code>).</li>
+      <li>Click <b>Commit changes</b>. Render will automatically redeploy and load the application!</li>
+    </ol>
+  </div>
+</body>
+</html>"""
+        payload = html.encode("utf-8")
+        self.send_response(200)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(payload)))
+        self.end_headers()
+        self.wfile.write(payload)
 
 def run_server():
     database.init_db()
