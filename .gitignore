@@ -1,0 +1,54 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# C / C++ build outputs
+*.exe
+*.out
+*.o
+*.obj
+*.dll
+*.dylib
+
+# Sandboxes & Temp folders
+codementor_sandbox_*
+.sandbox/
+scratch/
+tmp/
+temp/
+Hackathon Project/
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+*.secret
+secrets/
+
+# SQLite lock and temporary journal files (database file itself can be seeded or omitted)
+*.db-journal
+*.db-wal
+*.db-shm
+
+# IDE / Editor configuration
+.idea/
+*.sublime-project
+*.sublime-workspace
+.vscode/*
+!.vscode/settings.json
+
+# Operating System files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
